@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useRouter } from "next/router"
 
 // firebase
 import { ref, set, child, get } from "firebase/database"
@@ -12,12 +13,15 @@ import { IgLogo } from "../../public/icons/icons"
 import GOOGLE_ICON from "../../public/icons/7123025_logo_google_g_icon.svg"
 import Button from "../../public/shared/Button"
 import { isEmail, enoughNumCountPass, hasWhiteSpaceAndValidLength, isEmpty } from "../../public/utils/functions"
+import Link from "next/link"
 
 const uuid = require("uuid")
 const dbRef = ref(db)
 
 function SignUp ()
 {
+    // router
+    const router = useRouter()
 
     const [email, setEmail] = useState("")
     const [name, setName] = useState("")
@@ -92,6 +96,7 @@ function SignUp ()
                     userId: id,
                     name: name,
                     email: email,
+                    username:username,
                     password: password,
                     avatar: "",
                     create_at: new Date().getTime()
@@ -104,6 +109,7 @@ function SignUp ()
                         setTimeout(() =>
                         {
                             setShowPopUp(false)
+                            router.push("/auth/Login")
                         },2000)
                      })
                     .catch((err) => { alert(err) })
@@ -128,6 +134,7 @@ function SignUp ()
                         userId: id,
                         name: result._tokenResponse.email.slice(0, result._tokenResponse.email.lastIndexOf("@")),
                         email: result._tokenResponse.email,
+                        username: result._tokenResponse.email.slice(0, result._tokenResponse.email.lastIndexOf("@")),
                         password: "123456",
                         avatar: result._tokenResponse.photoUrl,
                         create_at: new Date().getTime()
@@ -140,9 +147,22 @@ function SignUp ()
                             const isUserExisting = values.some(
                                 (item) => item.email === newUser.email
                             )
-                            if(isUserExisting) alert("tai khoan da ton tai")
+                            if(isUserExisting) {
+                                setShowPopUp(true)
+                                setIsSuccess(false)
+                                setStatement("Account already exists")
+                            }
                             set(ref(db, `users/${id}/`), newUser)
-                                .then(() => { alert("dang ki thanh cong") })
+                                .then(() => { 
+                                    setShowPopUp(true)
+                                    setIsSuccess(true)
+                                    setStatement("Register successful !!!")
+                                    setTimeout(() =>
+                                    {
+                                        setShowPopUp(false)
+                                        router.push("/auth/Login")
+                                    },2000)
+                                })
                                 .catch((err) => { alert(err) })
                         })
                         .catch((err) => { alert(err) })
@@ -185,7 +205,7 @@ function SignUp ()
                     </div>
                 </div>
                 <div className="w-4/5 h-[70px] md:w-1/4 border-[1px] border-[rgb(219,219,219)] text-[14px] flex justify-center items-center">
-                    Have an account? <a className="text-[rgb(7,119,195)] cursor-pointer ml-1">Log in</a>
+                    Have an account? <Link className="text-[rgb(7,119,195)] cursor-pointer ml-1" href="/auth/Login">Log in</Link>
                 </div>
             </div>
             {
