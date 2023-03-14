@@ -1,10 +1,14 @@
 import { auth, db } from '../../src/firebase'
 import Image from 'next/image'
 import {signInWithPopup, GoogleAuthProvider, } from "firebase/auth"
-import { child, onValue, ref, set } from "firebase/database"
+import { child, get, onValue, ref, set } from "firebase/database"
 import {useEffect, useRef, useState } from 'react'
 import GoogleIcon from '../../public/icons/7123025_logo_google_g_icon.svg'
 import PopUp from '../../public/shared/PopUp'
+// redux
+import { useDispatch } from 'react-redux'
+import { userPackage } from "../../public/redux/actions"
+import { useRouter } from 'next/router'
 
 function Login() {
     const [datas , setDatas] = useState([])
@@ -14,6 +18,11 @@ function Login() {
     const provider = new GoogleAuthProvider()
     const emailRef = useRef()
     const passRef = useRef()
+    const [user, setUser] = useState({})
+    // dispatch
+    const dispatch = useDispatch()
+    const dbRef = ref(db)
+    const router = useRouter()
 
     useEffect( () => {
         onValue(ref(db, '/users'), (snapshot) => {
@@ -35,10 +44,22 @@ function Login() {
                 setIsSuccess(true)
                 setStatement('Đăng nhập thành công')
             }
-        } )
+        })
+        get(child(dbRef, "users/")).then((snapshot) =>
+        {
+            const record = snapshot.val() ?? []
+            const values = Object.values(record)
+            const currUser = values.find(item => item.email === emailRef.current.value)
+            console.log(currUser);
+            dispatch(userPackage(currUser))
+        })
         setIsPopUp(!isPopUp)
         console.log(isSuccess)
         console.log(isPopUp)
+        setTimeout(() =>
+        {
+            router.push("/")
+        },[2000])
     } 
 
     const handleLogInGoogle = () => {
@@ -108,7 +129,7 @@ function Login() {
             </div>
 
             <div className="sm:w-[350px] sm:h-[45px] h-[45px] sm:border-[1px] mt-[10px] p-[10px] flex items-center justify-center w-screen">
-                <div className="mr-[10px] sm:mr-[5px] text-[20px] font-semibold"> Don't have an account?</div>
+                <div className="mr-[10px] sm:mr-[5px] text-[20px] font-semibold"> {`Don't have an account?`}</div>
                 <div className="text-[#0095f6] text-[20px]">Sign up</div>
             </div>
         </div>
