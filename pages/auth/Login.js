@@ -1,5 +1,6 @@
 import { auth, db } from '../../src/firebase'
 import Image from 'next/image'
+import Link from 'next/link'
 import {signInWithPopup, GoogleAuthProvider, } from "firebase/auth"
 import { child, onValue, ref, set } from "firebase/database"
 import {useEffect, useRef, useState } from 'react'
@@ -109,7 +110,7 @@ function Login() {
 
             <div className="sm:w-[350px] sm:h-[45px] h-[45px] sm:border-[1px] mt-[10px] p-[10px] flex items-center justify-center w-screen">
                 <div className="mr-[10px] sm:mr-[5px] text-[20px] font-semibold"> Don't have an account?</div>
-                <div className="text-[#0095f6] text-[20px]">Sign up</div>
+                <Link className="text-[#0095f6] text-[20px]" href="/auth/sign-up"> Sign up </Link>
             </div>
         </div>
     )
