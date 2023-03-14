@@ -4,9 +4,13 @@ import DefaultProfile from "../../public/icons/defaultProfile.jpg"
 import { EditIcon, PostsIcon, SavedIcon, TaggedIcon } from "../../public/icons/icons"
 import EditPopUp from "../../public/shared/EditPopUp"
 import Sidebar from "../../public/shared/Sidebar"
+import Posts from "../../public/shared/Posts"
+import Saved from "../../public/shared/Saved"
+import Tagged from "../../public/shared/Tagged"
 
 function AccountPage() {
     const [isEdit, setIsEdit] = useState(false)
+    const [tab, setTab] = useState(1)
 
     const handleEditPopUp = () => {
         setIsEdit(!isEdit)
@@ -48,23 +52,45 @@ function AccountPage() {
                     </div>
                 </div>
                 <div className="flex justify-center text-[#8e8e8e] font-semibold">
-                    <div className="flex items-center w-[60px] h-[50px] mr-[50px] border-t-[1px] border-black">
+                    <div 
+                        className={tab == 1 ? "flex items-center cursor-pointer w-[60px] h-[50px] mr-[50px] border-t-[1px] border-black text-black" : "flex items-center cursor-pointer w-[60px] h-[50px] mr-[50px]"}
+                        onClick = {() => setTab(1)}
+                    >
                         <div className="text-[15px]">
                             {PostsIcon}
                         </div>
                         <p className="ml-[5px] text-[13px] ">POSTS</p>
                     </div>
-                    <div className="flex items-center w-[60px] h-[50px] mr-[50px] border-t-[1px] border-black">
+
+                    <div 
+                        className={tab == 2 ? "flex items-center cursor-pointer w-[60px] h-[50px] mr-[50px] border-t-[1px] border-black text-black" : "flex items-center cursor-pointer w-[60px] h-[50px] mr-[50px]"}
+                        onClick={() => setTab(2)}
+                    >
                         <div className="text-[15px]">
                             {SavedIcon}
                         </div>
                         <p className="ml-[5px] text-[13px] ">SAVED</p>
                     </div>
-                    <div className="flex items-center w-[70px] h-[50px] border-t-[1px] border-black">
+
+                    <div 
+                        className={tab ==3 ? "flex items-center cursor-pointer w-[70px] h-[50px] border-t-[1px] border-black text-black" : "flex items-center cursor-pointer w-[70px] h-[50px]"}
+                        onClick={() => setTab(3)}
+                    >
                         <div className="text-[15px]">
                             {TaggedIcon}
                         </div>
                         <p className="ml-[5px] text-[13px] ">TAGGED</p>
+                    </div>
+                </div>
+                <div className="mx-[30px]">
+                    <div className={tab == 1 ?"block" : "hidden"}>
+                        <Posts/>
+                    </div>
+                    <div className={tab == 2 ?"block" : "hidden"}>
+                        <Saved/>
+                    </div>
+                    <div className={tab == 3 ?"block" : "hidden"}>
+                        <Tagged/>
                     </div>
                 </div>
             </div>
